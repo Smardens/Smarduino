@@ -1,15 +1,15 @@
 # Smarduino
 Get it? Smardens and Arduino....Smarduino??
 
-## Git Instructions: mini cheatsheet of the most important git code
+## Mini Cheatsheet of Git Instructions:
 ----
-#### Terms
+#### Terms:
 * **master branch** - branch with latest working code (main program)
 * **remote branch** - your branch
 * **upstream branch** - branch that can be tracked
 * **origin** - perform operation on the source of your target
 
-### going to a *new* branch
+### going to a *new* branch:
 * making a new branch with all the work you have
 ```
 git checkout -b {newbranchname}
@@ -21,13 +21,13 @@ git checkout -b {newbranchname}
 git checkout {branchname}
 ```
 
-### when pushing to your branch for the first time
+### when pushing to your branch for the first time:
 * must set upstream so that github can track it 
 ```
 git push -u origin {branchname}    //you only need the -u argument in your very first push. 
 ```
 
-### pushing to a branch
+### pushing to a branch:
 * whenever you push, you should ALWAYS **ADD**, **COMMIT**, then **PULL** first
 ```
 git add .                    //period means "everything". you can also choose to add only specific files
@@ -38,7 +38,7 @@ git push                     //push to your branch
 ```
 * order of operations:   	 add -> commit -> pull -> push
 
-### see status of files modified
+### see status of files modified:
 ```
 git status
 ```
@@ -52,7 +52,7 @@ git diff {branchname}      // view differences in different branches
 
 ```
 
-### see list of commits
+### see list of commits:
 ```
 git log      // view commit log
 git checkout {first 6 characters of chosen checkpoint hash} -b {new branch name}  // checkout log to new branch
