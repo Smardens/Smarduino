@@ -2,7 +2,7 @@
 Get it? Smardens and Arduino....Smarduino??
 
 ## Mini Cheatsheet of Git Instructions:
-----
+
 #### Terms:
 * **master branch** - branch with latest working code (main program)
 * **remote branch** - your branch
