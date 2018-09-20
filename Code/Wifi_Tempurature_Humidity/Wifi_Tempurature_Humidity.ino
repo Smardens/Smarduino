@@ -27,14 +27,12 @@
 #define DEBUG_PRINT(x)
 #endif
 
-
 EIoTCloudRestApi eiotcloud;
 
 // change those lines
-#define AP_USERNAME "" //need workaround for beachnet+
-#define AP_PASSWORD "" //also need workaround for beachnet+
+#define WiFi_USERNAME "" //need workaround for beachnet+
+#define WiFi_PASSWORD "" //also need workaround for beachnet+
 #define INSTANCE_ID "5b8ef14047976c47a0d13172"
-
 
 #define REPORT_INTERVAL 60 //in seconds
 
@@ -73,7 +71,7 @@ void setup() {
   EEPROM.begin(512);
   loadConfig();
 
-  eiotcloud.begin(AP_USERNAME, AP_PASSWORD);
+  eiotcloud.begin(WiFi_USERNAME, WiFi_PASSWORD);
 
   // if first time get new token and register new module
   // here hapend Plug and play logic to add module to Cloud
@@ -135,9 +133,9 @@ void setup() {
     DEBUG_PRINT("SetLogToDatabase: ");
     DEBUG_PRINTLN(valueRet4);
 
-    //SetAvreageInterval
+    //SetAverageInterval
     bool valueRet5 = eiotcloud.SetParameterAverageInterval(parameterId1, "10");
-    DEBUG_PRINT("SetAvreageInterval: ");
+    DEBUG_PRINT("SetAverageInterval: ");
     DEBUG_PRINTLN(valueRet5);
 
     //adding parameter to display humidity
