@@ -2,32 +2,31 @@
 #include "EIoTCloudRestApiV1.0.h"
 #include <EEPROM.h>
 
-#define DEBUG_PROG
-
-#ifdef DEBUG_PROG
-#define DEBUG_PRINTLN(x)  Serial.println(x)
-#define DEBUG_PRINT(x)    Serial.print(x)
+#define DEBUG
+#ifdef DEBUG
+#define DPRINTLN(x)  Serial.println(x)
+#define DPRINT(x)    Serial.print(x)
 #else
-#define DEBUG_PRINTLN(x)
-#define DEBUG_PRINT(x)
+#define DPRINTLN(x)
+#define DPRINT(x)
 #endif
 
 EIoTCloudRestApi eiotcloud;
 
 //change lines for wifi name and password
-#define WiFi_USERNAME "" //change
-#define WiFi_PASSWORD "" //change
-#define INSTANCE_ID "5b8ef14047976c47a0d13172" 
+#define WiFi_USERNAME "BrokeBois" //change
+#define WiFi_PASSWORD "S1gma3tabetaCh1" //change
+#define INSTANCE_ID "5b8ef14047976c47a0d13172"
+#define TOKEN "eXsNNpCfLl9T55eRh2pC77A5CsQXlZSbTL5XPWTx"
+
+#define CONFIG_START 32
+#define CONFIG_VERSION "v01"
 
 #define REPORT_INTERVAL 60 //in seconds
 
-#define CONFIG_START 0
-#define CONFIG_VERSION "v01"
-
 #define MIN_VAL 20
-#define MAX_VAL 240
 
-#define SENSOR_PIN A//uv sensor is on the analog input
+#define SENSOR_PIN A0//uv sensor is on the analog input
 
 struct StoreStruct {
   //this is for mere detection if they are your settings
@@ -38,34 +37,53 @@ struct StoreStruct {
   //bool TokenOk; //valid token
 } storage = {
   CONFIG_VERSION,
-  //token 
-  "1234567890123456789012345678901234567890",
+  //token
+  "eXsNNpCfLl9T55eRh2pC77A5CsQXlZSbTL5XPWTx",
   //the default module 0 - invalid module
   0,
+  //0//not valid
 };
+
+float lightVal;
 
 String moduleId = "";
 String parameterId1 = "";
 
-float lightReading;
-
 void setup() {
   Serial.begin(115200);
-  DEBUG_PRINTLN("Start...");
+  DPRINTLN("Start...");
 
   EEPROM.begin(512);
   loadConfig();
 
-  eiotcloud.begin(WiFi_USERNAME, WiFi_PASSWORD);
+  eiotcloud.begin(WiFi_USERNAME, WiFi_PASSWORD, TOKEN);
+  //eiotcloud.SetToken(TOKEN);
 
-  //if first time get new token and register new module 
+  Serial.println("Connecting to ");
+  Serial.print(WiFi_USERNAME); Serial.println("...");
+
+  int i = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(++i); Serial.print(' ');
+  }
+
+  Serial.print('\n');
+  Serial.println("Connection Established");
+  Serial.print("IP Address:\t");
+  Serial.println(WiFi.localIP());
+  Serial.println("ModuleId:");
+  Serial.println(storage.moduleId);
+
+  //if first time get new token and register new module
   //here happened Plug and Play logic to add module to cloud
   if (storage.moduleId == 0)
   {
-    //get new token - alternative is to manually create token and store it in eeprom
+
+    //get new token - alternarive is to manually create token and store it in EEPROM
     String token = eiotcloud.TokenNew(INSTANCE_ID);
-    DEBUG_PRINT("Token: ");
-    DEBUG_PRINTLN(token);
+    DPRINT("Token: ");
+    DPRINTLN(token);
     eiotcloud.SetToken(token);
 
     //remember token
@@ -73,61 +91,61 @@ void setup() {
 
     //add new module and configure it
     moduleId = eiotcloud.ModuleNew();
-    DEBUG_PRINT("ModuleId: ");
-    DEBUG_PRINTLN(moduleId);
+    DPRINT("ModuleId: ");
+    DPRINTLN(moduleId);
     storage.moduleId = moduleId.toInt();
-   
+
     // set module type
     bool modtyperet = eiotcloud.SetModulType(moduleId, "MT_GENERIC");
-    DEBUG_PRINT("SetModulType: ");
-    DEBUG_PRINTLN(modtyperet);
+    DPRINT("SetModulType: ");
+    DPRINTLN(modtyperet);
 
     // set module name
-    bool modname = eiotcloud.SetModulName(moduleId, "UV_Sensor001");
-    DEBUG_PRINT("SetModulName: ");
-    DEBUG_PRINTLN(modname);
+    bool modname = eiotcloud.SetModulName(moduleId, "UV_01");
+    DPRINT("SetModulName: ");
+    DPRINTLN(modname);
 
     //add image settings parameter
     String parameterImgId = eiotcloud.NewModuleParameter(moduleId, "Settings.Icon1");
-    DEBUG_PRINT("parameterImgId: ");
-    DEBUG_PRINTLN(parameterImgId);
+    DPRINT("parameterImgId: ");
+    DPRINTLN(parameterImgId);
 
     //set module image
     bool valueRet1 = eiotcloud.SetParameterValue(parameterImgId, "radiation.png");
-    DEBUG_PRINT("SetParameterValue: ");
-    DEBUG_PRINTLN(valueRet1);
+    DPRINT("SetParameterValue: ");
+    DPRINTLN(valueRet1);
 
     //now add parameter to display UV Light
     parameterId1 = eiotcloud.NewModuleParameter(moduleId, "Sensor.Parameter1");
-    DEBUG_PRINT("ParameterId1: ");
-    DEBUG_PRINTLN(parameterId1);
+    DPRINT("ParameterId1: ");
+    DPRINTLN(parameterId1);
 
     //set parameter description
     bool valueRet2 = eiotcloud.SetParameterDescription(parameterId1, "UV");
-    DEBUG_PRINT("SetParameterDescription: ");
-    DEBUG_PRINTLN(valueRet2);
+    DPRINT("SetParameterDescription: ");
+    DPRINTLN(valueRet2);
 
     //set unit
-    bool valueRet3 = eiotcloud.SetParameterUnit(parameterId1, "%");
-    DEBUG_PRINT("SetParameterUnit: ");
-    DEBUG_PRINTLN(valueRet3);
+    bool valueRet3 = eiotcloud.SetParameterUnit(parameterId1, "INDEX");
+    DPRINT("SetParameterUnit: ");
+    DPRINTLN(valueRet3);
 
     //Set parameter LogToDatbase
     bool valueRet4 = eiotcloud.SetParameterLogToDatabase(parameterId1, true);
-    DEBUG_PRINT("SetLogToDatabase: ");
-    DEBUG_PRINTLN(valueRet4);
+    DPRINT("SetLogToDatabase: ");
+    DPRINTLN(valueRet4);
 
-    //SetAverageInterval  
+    //SetAverageInterval
     bool valueRet5 = eiotcloud.SetParameterAverageInterval(parameterId1, "10");
-    DEBUG_PRINT("SetAverageInterval: ");
-    DEBUG_PRINTLN(valueRet5);
+    DPRINT("SetAverageInterval: ");
+    DPRINTLN(valueRet5);
 
     saveConfig();
   }
 
   //if something went wrong, wait here
   if (storage.moduleId == 0)
-  delay(1);
+    delay(1);
 
   //read module ID from storage
   moduleId = String(storage.moduleId);
@@ -135,27 +153,31 @@ void setup() {
   eiotcloud.SetToken(storage.token);
   //read Sensor.Parameter1 ID from cloud
   parameterId1 = eiotcloud.GetModuleParameterByName(moduleId, "Sensor.Parameter1");
-  DEBUG_PRINT("parameterId1: ");
-  DEBUG_PRINTLN(parameterId1);
+  DPRINT("parameterId1: ");
+  DPRINTLN(parameterId1);
 
   Serial.println();
-  Serial.println("Status\tUV (%)");
-  
-  lightReading = -1;
+  Serial.println("Status\nUV (Index)");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  lightReading = analogRead(SENSOR_PIN);
-  if(lightReading < MIN_VAL)
+  int analogVal = analogRead(SENSOR_PIN);
+  if (analogVal < MIN_VAL)
   {
-    lightReading = 0;
+    lightVal = 0;
   }
   else
   {
-    lightReading = 0.05*lightReading-1;
+    lightVal = 0.05 * analogVal - 1;
   }
-  Serial.print(lightReading);
+  Serial.println();
+  Serial.println(lightVal);
+
+  eiotcloud.SetParameterValue(parameterId1,String(lightVal));
+
+  int cnt = REPORT_INTERVAL;
+  while (cnt--)
+    delay(1000);
 }
 
 void loadConfig() {
