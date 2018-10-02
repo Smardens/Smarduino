@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 
 #define DEBUG
+
 #ifdef DEBUG
 #define DPRINTLN(x)  Serial.println(x)
 #define DPRINT(x)    Serial.print(x)
@@ -11,20 +12,22 @@
 #define DPRINT(x)
 #endif
 
+
 EIoTCloudRestApi eiotcloud;
 
 //change lines for wifi name and password
 #define WiFi_USERNAME "" //change
 #define WiFi_PASSWORD "" //change
 #define INSTANCE_ID "5b8ef14047976c47a0d13172"
-#define TOKEN "eXsNNpCfLl9T55eRh2pC77A5CsQXlZSbTL5XPWTx"
+#define TOKEN "xEXI4oJGJwaHedqbe1206iP8RWEeA6tnWUWa4YD0"
+
+#define REPORT_INTERVAL 60 //in seconds
 
 #define CONFIG_START 32
 #define CONFIG_VERSION "v01"
 
-#define REPORT_INTERVAL 60 //in seconds
-
-#define MIN_VAL 20
+#define AIR_VAL 520
+#define WATER_VAL 260
 
 #define SENSOR_PIN A0//uv sensor is on the analog input
 
@@ -38,13 +41,15 @@ struct StoreStruct {
 } storage = {
   CONFIG_VERSION,
   //token
-  "eXsNNpCfLl9T55eRh2pC77A5CsQXlZSbTL5XPWTx",
+  "xEXI4oJGJwaHedqbe1206iP8RWEeA6tnWUWa4YD0",
   //the default module 0 - invalid module
   0,
-  //0//not valid
 };
 
-float lightVal;
+int intervals = (AIR_VAL - WATER_VAL) / 3;
+
+int soilMoistureValue = 0;
+String soilMoistureLevel = "";
 
 String moduleId = "";
 String parameterId1 = "";
@@ -56,9 +61,9 @@ void setup() {
   EEPROM.begin(512);
   loadConfig();
 
-  eiotcloud.begin(WiFi_USERNAME, WiFi_PASSWORD, TOKEN);
+  eiotcloud.begin(WiFi_USERNAME, WiFi_PASSWORD);
   //eiotcloud.SetToken(TOKEN);
-
+  
   Serial.println("Connecting to ");
   Serial.print(WiFi_USERNAME); Serial.println("...");
 
@@ -75,12 +80,12 @@ void setup() {
   Serial.println("ModuleId:");
   Serial.println(storage.moduleId);
 
+
   //if first time get new token and register new module
   //here happened Plug and Play logic to add module to cloud
   if (storage.moduleId == 0)
   {
-
-    //get new token - alternarive is to manually create token and store it in EEPROM
+    //get new token - alternative is to manually create token and store it in eeprom
     String token = eiotcloud.TokenNew(INSTANCE_ID);
     DPRINT("Token: ");
     DPRINTLN(token);
@@ -101,7 +106,7 @@ void setup() {
     DPRINTLN(modtyperet);
 
     // set module name
-    bool modname = eiotcloud.SetModulName(moduleId, "UV_01");
+    bool modname = eiotcloud.SetModulName(moduleId, "SoilMoisture_01");
     DPRINT("SetModulName: ");
     DPRINTLN(modname);
 
@@ -111,7 +116,7 @@ void setup() {
     DPRINTLN(parameterImgId);
 
     //set module image
-    bool valueRet1 = eiotcloud.SetParameterValue(parameterImgId, "radiation.png");
+    bool valueRet1 = eiotcloud.SetParameterValue(parameterImgId, "ao.png");
     DPRINT("SetParameterValue: ");
     DPRINTLN(valueRet1);
 
@@ -121,12 +126,12 @@ void setup() {
     DPRINTLN(parameterId1);
 
     //set parameter description
-    bool valueRet2 = eiotcloud.SetParameterDescription(parameterId1, "UV");
+    bool valueRet2 = eiotcloud.SetParameterDescription(parameterId1, "Moisture Level");
     DPRINT("SetParameterDescription: ");
     DPRINTLN(valueRet2);
 
     //set unit
-    bool valueRet3 = eiotcloud.SetParameterUnit(parameterId1, "INDEX");
+    bool valueRet3 = eiotcloud.SetParameterUnit(parameterId1, "Moisture Level");
     DPRINT("SetParameterUnit: ");
     DPRINTLN(valueRet3);
 
@@ -157,23 +162,29 @@ void setup() {
   DPRINTLN(parameterId1);
 
   Serial.println();
-  Serial.println("Status\nUV (Index)");
+  Serial.println("Status\tMoisture Level");
 }
 
 void loop() {
-  int analogVal = analogRead(SENSOR_PIN);
-  if (analogVal < MIN_VAL)
-  {
-    lightVal = 0;
-  }
-  else
-  {
-    lightVal = 0.05 * analogVal - 1;
-  }
-  Serial.println();
-  Serial.println(lightVal);
+  // put your main code here, to run repeatedly:
 
-  eiotcloud.SetParameterValue(parameterId1,String(lightVal));
+  soilMoistureValue = analogRead(A0);  //put Sensor insert into soil
+  if (soilMoistureValue > WATER_VAL && soilMoistureValue < (WATER_VAL + intervals))
+  {
+    soilMoistureLevel = "Very Wet";
+  }
+  else if (soilMoistureValue > (WATER_VAL + intervals) && soilMoistureValue < (AIR_VAL - intervals))
+  {
+    soilMoistureLevel = "Wet";
+  }
+  else if (soilMoistureValue < AIR_VAL && soilMoistureValue > (AIR_VAL - intervals))
+  {
+    soilMoistureLevel = "Dry";
+  }
+
+  bool valueRet = eiotcloud.SetParameterValue(parameterId1, String(soilMoistureLevel));
+  DPRINT("\nSetParameterValue: ");
+  DPRINTLN(valueRet);
 
   int cnt = REPORT_INTERVAL;
   while (cnt--)
