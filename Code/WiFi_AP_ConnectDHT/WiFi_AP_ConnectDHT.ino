@@ -12,6 +12,7 @@
 #define DPRINT(x)
 #endif
 
+#define SENSORID "DHT01"
 #define DHTPIN 4
 
 //Access Point Credentials
@@ -94,12 +95,15 @@ void readDHTSensor() {
 }
 
 void buildDataStream() {
-  data = "temp=";
+  data = "id=";
+  data += String(SENSORID);
+  data += "&temp=";
   data += String(temp);
   data += "&hum=";
   data += String(hum);
   Serial.println("Data Stream: "+data);
 }
+
 
 void sendHttpRequest() {
   HTTPClient http;

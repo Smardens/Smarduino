@@ -33,6 +33,7 @@ void handle_index() {
 
 // Handling the /feed page from my server
 void handle_feed() {
+  String id = server.arg("id");
   String t = server.arg("temp");
   String h = server.arg("hum");
   String uv = server.arg("uv");
