@@ -16,10 +16,8 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "SM01" //change this id when uploading to different sensor modules
+#define SENSORID "SM05" //change this id when uploading to different sensor modules
 #define SENSOR_PIN A0 //Soil Moisture sensor is on the analog input
-#define AIR_VAL 520
-#define WATER_VAL 260
 
 //Local ESP web-server address
 String serverHost = "http://192.168.4.1/feed";
@@ -32,9 +30,7 @@ int failConnectRetryInterval = 2;
 int counter = 0;
 
 //Working Variables
-int intervals = (AIR_VAL - WATER_VAL) / 3;
 int soilMoistureValue = 0;
-String soilMoistureLevel = "";
 
 //Staic Network Configuration
 IPAddress ip(192, 168, 4, 4);
@@ -45,9 +41,9 @@ WiFiClient client;
 
 void setup()
 {
-  ESP.eraseConfig();
-  WiFi.persistent(false);
-  
+//  ESP.eraseConfig();
+//  WiFi.persistent(false);
+//  
   Serial.begin(115200);
   Serial.println();
 
@@ -85,20 +81,6 @@ void setup()
 
 void readSMSensor() {
   soilMoistureValue = analogRead(SENSOR_PIN);  //put Sensor insert into soil
-  if (soilMoistureValue > WATER_VAL && soilMoistureValue < (WATER_VAL + intervals))
-  {
-    soilMoistureLevel = "Very+Wet";
-  }
-  else if (soilMoistureValue > (WATER_VAL + intervals) && soilMoistureValue < (AIR_VAL - intervals))
-  {
-    soilMoistureLevel = "Wet";
-  }
-  else if (soilMoistureValue < AIR_VAL && soilMoistureValue > (AIR_VAL - intervals))
-  {
-    soilMoistureLevel = "Dry";
-  }
-
-  Serial.println("Soil Moisture Level: " + String(soilMoistureLevel));
 }
 
 void buildDataStream() {
@@ -111,7 +93,7 @@ void buildDataStream() {
   data += "&uv=";
   data += String(0);
   data += "&sm=";
-  data += String(soilMoistureLevel);
+  data += String(soilMoistureValue);
   Serial.println("Data Stream: " + data);
 }
 
