@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <DHT.h>
 
 //Debug Macros
 #define DEBUG
@@ -17,8 +16,10 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "DHT01" //change this id when uploading to different sensor modules
-#define DHTPIN 4
+#define SENSORID "SM01" //change this id when uploading to different sensor modules
+#define SENSOR_PIN A0 //Soil Moisture sensor is on the analog input
+#define AIR_VAL 520
+#define WATER_VAL 260
 
 //Local ESP web-server address
 String serverHost = "http://192.168.4.1/feed";
@@ -28,18 +29,18 @@ int sleepInterval = 5;
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
 int failConnectRetryInterval = 2;
-int counter = 0; 
+int counter = 0;
 
 //Working Variables
-float hum;
-float temp;
+int intervals = (AIR_VAL - WATER_VAL) / 3;
+int soilMoistureValue = 0;
+String soilMoistureLevel = "";
 
 //Staic Network Configuration
 IPAddress ip(192, 168, 4, 4);
-IPAddress gateway(192,168,4,1);
+IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 
-DHT dht;
 WiFiClient client;
 
 void setup()
@@ -49,7 +50,7 @@ void setup()
   
   Serial.begin(115200);
   Serial.println();
-  
+
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
@@ -69,10 +70,9 @@ void setup()
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
 
-  dht.setup(DHTPIN);
 
-  Serial.println("Reading DHT Sensor\n");
-  readDHTSensor();
+  Serial.println("Reading Soil Moisture Sensor\n");
+  readSMSensor();
   Serial.println("Construct DATA String.\n");
   buildDataStream();
   Serial.println("Sending Get Request.\n");
@@ -83,32 +83,37 @@ void setup()
   hibernate(sleepInterval);
 }
 
-void readDHTSensor() {
-  delay(200);
-  hum = dht.getHumidity();
-  temp = dht.getTemperature();
-  if (isnan(hum) || isnan(temp)) {
-    temp = 0.00;
-    hum = 0.00;
+void readSMSensor() {
+  soilMoistureValue = analogRead(SENSOR_PIN);  //put Sensor insert into soil
+  if (soilMoistureValue > WATER_VAL && soilMoistureValue < (WATER_VAL + intervals))
+  {
+    soilMoistureLevel = "Very+Wet";
   }
-  Serial.println("Temperature Read: "+String(temp));
-  Serial.println("Humidity Read: "+String(hum));
+  else if (soilMoistureValue > (WATER_VAL + intervals) && soilMoistureValue < (AIR_VAL - intervals))
+  {
+    soilMoistureLevel = "Wet";
+  }
+  else if (soilMoistureValue < AIR_VAL && soilMoistureValue > (AIR_VAL - intervals))
+  {
+    soilMoistureLevel = "Dry";
+  }
+
+  Serial.println("Soil Moisture Level: " + String(soilMoistureLevel));
 }
 
 void buildDataStream() {
   data = "id=";
   data += String(SENSORID);
   data += "&temp=";
-  data += String(temp);
+  data += String(0);
   data += "&hum=";
-  data += String(hum);
+  data += String(0);
   data += "&uv=";
   data += String(0);
   data += "&sm=";
-  data += String(0);
-  Serial.println("Data Stream: "+data);
+  data += String(soilMoistureLevel);
+  Serial.println("Data Stream: " + data);
 }
-
 
 void sendHttpRequest() {
   HTTPClient http;
