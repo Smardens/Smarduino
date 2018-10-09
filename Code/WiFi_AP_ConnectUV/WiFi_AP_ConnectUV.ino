@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <DHT.h>
 
 //Debug Macros
 #define DEBUG
@@ -17,8 +16,9 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "DHT01" //change this id when uploading to different sensor modules
-#define DHTPIN 4
+#define SENSORID "UV01" //change this id when uploading to different sensor modules
+#define SENSOR_PIN A0 //UV sensor is on the analog input
+#define MIN_VAL 20
 
 //Local ESP web-server address
 String serverHost = "http://192.168.4.1/feed";
@@ -28,18 +28,16 @@ int sleepInterval = 5;
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
 int failConnectRetryInterval = 2;
-int counter = 0; 
+int counter = 0;
 
 //Working Variables
-float hum;
-float temp;
+float lightVal;
 
 //Staic Network Configuration
 IPAddress ip(192, 168, 4, 4);
 IPAddress gateway(192,168,4,1);
 IPAddress subnet(255, 255, 255, 0);
 
-DHT dht;
 WiFiClient client;
 
 void setup()
@@ -49,7 +47,7 @@ void setup()
   
   Serial.begin(115200);
   Serial.println();
-  
+
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
@@ -65,14 +63,12 @@ void setup()
     counter++;
   }
   Serial.println();
-
+  
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
 
-  dht.setup(DHTPIN);
-
-  Serial.println("Reading DHT Sensor\n");
-  readDHTSensor();
+  Serial.println("Reading UV Sensor\n");
+  readUVSensor();
   Serial.println("Construct DATA String.\n");
   buildDataStream();
   Serial.println("Sending Get Request.\n");
@@ -83,32 +79,33 @@ void setup()
   hibernate(sleepInterval);
 }
 
-void readDHTSensor() {
-  delay(200);
-  hum = dht.getHumidity();
-  temp = dht.getTemperature();
-  if (isnan(hum) || isnan(temp)) {
-    temp = 0.00;
-    hum = 0.00;
+void readUVSensor() {
+  int analogVal = analogRead(SENSOR_PIN);
+  if (analogVal < MIN_VAL)
+  {
+    lightVal = 0;
   }
-  Serial.println("Temperature Read: "+String(temp));
-  Serial.println("Humidity Read: "+String(hum));
+  else
+  {
+    lightVal = 0.05 * analogVal - 1;
+  }
+  
+  Serial.println("UV Level: "+String(lightVal));
 }
 
 void buildDataStream() {
   data = "id=";
   data += String(SENSORID);
   data += "&temp=";
-  data += String(temp);
-  data += "&hum=";
-  data += String(hum);
-  data += "&uv=";
   data += String(0);
+  data += "&hum=";
+  data += String(0);
+  data += "&uv=";
+  data += String(lightVal);
   data += "&sm=";
   data += String(0);
   Serial.println("Data Stream: "+data);
 }
-
 
 void sendHttpRequest() {
   HTTPClient http;
