@@ -75,7 +75,7 @@ void setup()
   readDHTSensor();
   Serial.println("Construct DATA String.\n");
   buildDataStream();
-  Serial.println("Sending Get Request.\n");
+  Serial.println("Sending POST Request.\n");
   sendHttpRequest();
   Serial.println();
   Serial.println("[Sensor Reading Finished]");
