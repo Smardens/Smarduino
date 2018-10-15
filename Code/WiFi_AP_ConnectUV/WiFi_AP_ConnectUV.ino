@@ -21,7 +21,7 @@
 #define MIN_VAL 20
 
 //Local ESP web-server address
-String serverHost = "http://192.168.4.1/feed";
+String serverHost = "http://192.168.4.1/uv";
 String data;
 // DEEP_SLEEP Timeout interval
 int sleepInterval = 5;
@@ -33,11 +33,6 @@ int counter = 0;
 //Working Variables
 float lightVal;
 
-//Staic Network Configuration
-IPAddress ip(192, 168, 4, 4);
-IPAddress gateway(192,168,4,1);
-IPAddress subnet(255, 255, 255, 0);
-
 WiFiClient client;
 
 void setup()
@@ -48,7 +43,6 @@ void setup()
   Serial.begin(115200);
   Serial.println();
 
-  WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
   Serial.print("Connecting");
@@ -96,22 +90,18 @@ void readUVSensor() {
 void buildDataStream() {
   data = "id=";
   data += String(SENSORID);
-  data += "&temp=";
-  data += String(0);
-  data += "&hum=";
-  data += String(0);
-  data += "&uv=";
+  data += "&value=";
   data += String(lightVal);
-  data += "&sm=";
-  data += String(0);
   Serial.println("Data Stream: "+data);
 }
 
 void sendHttpRequest() {
   HTTPClient http;
   http.begin(serverHost);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  http.POST(data);
+  http.("Content-Type", "application/x-www-form-urlencoded");
+  int httpCode = http.POST(data);
+
+  Serial.println(httpCode);  
   http.writeToStream(&Serial);
   http.end();
 }
