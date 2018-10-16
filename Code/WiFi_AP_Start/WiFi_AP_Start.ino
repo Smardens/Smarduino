@@ -74,7 +74,7 @@ void handle_uv() {
   String id = server.arg("id");
   String value = server.arg("value");
 
-  server.send(200, "text/plain", "This is a positive resposne to the client.");
+  server.send(200, "text/plain", "Message received from client.");
   Serial.println("Sensor ID: " + String(id) + "\nSensor Value: " + String(value));
 }
 
@@ -83,7 +83,7 @@ void handle_sm() {
   String id = server.arg("id");
   String value = server.arg("value");
 
-  server.send(200, "text/plain", "This is a positive resposne to the client.");
+  server.send(200, "text/plain", "Message received from client.");
   Serial.println("Sensor ID: " + String(id) + "\nSensor Value: " + String(value));
 }
 
@@ -93,7 +93,7 @@ void handle_dht() {
   String tVal = server.arg("temp");
   String hVal = server.arg("hum");
 
-  server.send(200, "text/plain", "This is a positive resposne to the client.");
+  server.send(200, "text/plain", "Message received from client.");
   Serial.println("Sensor ID: " + String(id) + "\nTemperature Value: " + String(tVal) + "\nHumidity Value: " + String(hVal));
 }
 
