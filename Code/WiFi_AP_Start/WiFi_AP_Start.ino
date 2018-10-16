@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266WebServerSecure.h>
 
 //Debug Macros
 #define DEBUG
@@ -11,6 +10,11 @@
 #define DPRINTLN(x)
 #define DPRINT(x)
 #endif
+
+//Network Configuration Meta Data
+IPAddress ip(192, 168, 1, 100);
+IPAddress gateway(192, 168, 1, 254);
+IPAddress subnet(255, 255, 255, 0);
 
 //Access Point Credentials
 #define AP_SSID "Smardens_AP"
@@ -28,12 +32,14 @@ void setup() {
 
 void setupAP() {
   Serial.print("Setting soft-AP ... ");
-  WiFi.disconnect();
+
+  WiFi.mode(WIFI_AP);
+  WiFi.softAPConfig(ip, gateway, subnet);
   boolean result = WiFi.softAP(AP_SSID, AP_PASS);
   if (result == true)
   {
     Serial.println("Ready");
-  }
+  } 
   else
   {
     Serial.println("Failed!");

@@ -16,33 +16,43 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "UV01" //change this id when uploading to different sensor modules
+//Change ID when uploading to different UV Modules
+//Will also need to change static IP for each module
+#define SENSORID "UV01"
+//#define SENSORID "UV02" 
 #define SENSOR_PIN A0 //UV sensor is on the analog input
 #define MIN_VAL 20
 
+//Network Config Meta Data
+IPAddress ip(192,168,1,110); //Use this IPAddress for UV01
+//IPAddress ip(192,168,1,111); //Use the IPAddress for UV02
+
+IPAddress gateway(192,168,1,254);
+IPAddress subnet(255,255,255,0);
+
 //Local ESP web-server address
-String serverHost = "http://192.168.4.1/uv";
-String data;
+String serverHost = "http://192.168.1.100:80/uv";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 5;
+int sleepInterval = 60; //change this value for how many minutes to hibernate for
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
 int failConnectRetryInterval = 2;
 int counter = 0;
 
 //Working Variables
+String data;
 float lightVal;
 
-WiFiClient client;
 
 void setup()
 {
   ESP.eraseConfig();
-  WiFi.persistent(false);
-  
+    
   Serial.begin(115200);
   Serial.println();
 
+  WiFi.mode(WIFI_STA);
+  WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
   Serial.print("Connecting");
@@ -63,9 +73,9 @@ void setup()
 
   Serial.println("Reading UV Sensor\n");
   readUVSensor();
-  Serial.println("Construct DATA String.\n");
+  Serial.println("Constructing DATA String.\n");
   buildDataStream();
-  Serial.println("Sending Get Request.\n");
+  Serial.println("Sending POST Request.\n");
   sendHttpRequest();
   Serial.println();
   Serial.println("[Sensor Reading Finished]");
@@ -92,15 +102,15 @@ void buildDataStream() {
   data += String(SENSORID);
   data += "&value=";
   data += String(lightVal);
-  Serial.println("Data Stream: "+data);
+  Serial.println("Data String: "+data);
 }
 
 void sendHttpRequest() {
   HTTPClient http;
   http.begin(serverHost);
-  http.("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
   int httpCode = http.POST(data);
-
+  
   Serial.println(httpCode);  
   http.writeToStream(&Serial);
   http.end();

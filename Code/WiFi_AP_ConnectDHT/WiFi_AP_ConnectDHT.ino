@@ -17,48 +17,52 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "DHT01" //change this id when uploading to different sensor modules
+//Change ID when uploading to different DHT Modules
+//Will also need to change static IP for each module
+#define SENSORID "DHT01"
+//#define SENSORID "DHT02"
 #define DHTPIN 4
 
+//Network Config Meta Data
+IPAddress ip(192, 168, 1, 120); //Use this IPAddress for DHT01
+//IPAddress ip(192,168,1,121); //Use the IPAddress for DHT02
+
+IPAddress gateway(192, 168, 1, 254);
+IPAddress subnet(255, 255, 255, 0);
+
 //Local ESP web-server address
-String serverHost = "http://192.168.4.1/feed";
-String data;
+String serverHost = "http://192.168.1.100:80/dht";
 // DEEP_SLEEP Timeout interval
 int sleepInterval = 5;
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
 int failConnectRetryInterval = 2;
-int counter = 0; 
+int counter = 0;
 
 //Working Variables
+String data;
 float hum;
 float temp;
 
-//Staic Network Configuration
-IPAddress ip(192, 168, 4, 4);
-IPAddress gateway(192,168,4,1);
-IPAddress subnet(255, 255, 255, 0);
-
 DHT dht;
-WiFiClient client;
 
 void setup()
 {
   ESP.eraseConfig();
-  WiFi.persistent(false);
-  
+
   Serial.begin(115200);
   Serial.println();
-  
+
+  WiFi.mode(WIFI_STA);
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
   Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED)
   {
-    if(counter > 20){
-       Serial.println("Can't Find AP.\n [Sleeping]");    
-       hibernate(failConnectRetryInterval);
+    if (counter > 20) {
+      Serial.println("Can't Find AP.\n [Sleeping]");
+      hibernate(failConnectRetryInterval);
     }
     delay(500);
     Serial.print(".");
@@ -73,7 +77,7 @@ void setup()
 
   Serial.println("Reading DHT Sensor\n");
   readDHTSensor();
-  Serial.println("Construct DATA String.\n");
+  Serial.println("Constructing DATA String.\n");
   buildDataStream();
   Serial.println("Sending POST Request.\n");
   sendHttpRequest();
@@ -91,8 +95,8 @@ void readDHTSensor() {
     temp = 0.00;
     hum = 0.00;
   }
-  Serial.println("Temperature Read: "+String(temp));
-  Serial.println("Humidity Read: "+String(hum));
+  Serial.println("Temperature Read: " + String(temp));
+  Serial.println("Humidity Read: " + String(hum));
 }
 
 void buildDataStream() {
@@ -102,19 +106,16 @@ void buildDataStream() {
   data += String(temp);
   data += "&hum=";
   data += String(hum);
-  data += "&uv=";
-  data += String(0);
-  data += "&sm=";
-  data += String(0);
-  Serial.println("Data Stream: "+data);
+  Serial.println("Data String: " + data);
 }
-
 
 void sendHttpRequest() {
   HTTPClient http;
   http.begin(serverHost);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  http.POST(data);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
+  int httpCode = http.POST(data);
+
+  Serial.println(httpCode);
   http.writeToStream(&Serial);
   http.end();
 }

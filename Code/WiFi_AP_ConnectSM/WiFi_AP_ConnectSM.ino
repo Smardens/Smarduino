@@ -16,12 +16,27 @@
 #define AP_PASS "FluffyBunny69"
 
 //Sensor Meta Data
-#define SENSORID "SM05" //change this id when uploading to different sensor modules
+//Change ID when uploading to different Soil Moisture Modules
+//Will also need to change static IP for each module
+#define SENSORID "SM01"
+//#define SENSORID "SM02"
+//#define SENSORID "SM03"
+//#define SENSORID "SM04"
+//#define SENSORID "SM05"
 #define SENSOR_PIN A0 //Soil Moisture sensor is on the analog input
 
+//Network Config Meta Data
+IPAddress ip(192,168,1,101); //Use this IPAddress for SM01
+//IPAddress ip(192,168,1,102); //Use the IPAddress for SM02
+//IPAddress ip(192,168,1,103); //Use the IPAddress for SM03
+//IPAddress ip(192,168,1,104); //Use the IPAddress for SM04
+//IPAddress ip(192,168,1,105); //Use the IPAddress for SM05
+
+IPAddress gateway(192,168,1,254);
+IPAddress subnet(255,255,255,0);
+
 //Local ESP web-server address
-String serverHost = "http://192.168.4.1/feed";
-String data;
+String serverHost = "http://192.168.1.100:80/sm";
 // DEEP_SLEEP Timeout interval
 int sleepInterval = 5;
 
@@ -30,23 +45,18 @@ int failConnectRetryInterval = 2;
 int counter = 0;
 
 //Working Variables
+String data;
 int soilMoistureValue = 0;
 
-//Staic Network Configuration
-IPAddress ip(192, 168, 4, 4);
-IPAddress gateway(192, 168, 4, 1);
-IPAddress subnet(255, 255, 255, 0);
-
-WiFiClient client;
 
 void setup()
 {
-//  ESP.eraseConfig();
-//  WiFi.persistent(false);
-//  
+  ESP.eraseConfig();
+  
   Serial.begin(115200);
   Serial.println();
 
+  WiFi.mode(WIFI_STA);
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
@@ -69,9 +79,9 @@ void setup()
 
   Serial.println("Reading Soil Moisture Sensor\n");
   readSMSensor();
-  Serial.println("Construct DATA String.\n");
+  Serial.println("Constructing DATA String.\n");
   buildDataStream();
-  Serial.println("Sending Get Request.\n");
+  Serial.println("Sending POST Request.\n");
   sendHttpRequest();
   Serial.println();
   Serial.println("[Sensor Reading Finished]");
@@ -81,27 +91,24 @@ void setup()
 
 void readSMSensor() {
   soilMoistureValue = analogRead(SENSOR_PIN);  //put Sensor insert into soil
+  Serial.println("SM Level: " + String(soilMoistureValue));
 }
 
 void buildDataStream() {
   data = "id=";
   data += String(SENSORID);
-  data += "&temp=";
-  data += String(0);
-  data += "&hum=";
-  data += String(0);
-  data += "&uv=";
-  data += String(0);
-  data += "&sm=";
+  data += "&value=";
   data += String(soilMoistureValue);
-  Serial.println("Data Stream: " + data);
+  Serial.println("Data String: " + data);
 }
-
+  
 void sendHttpRequest() {
   HTTPClient http;
   http.begin(serverHost);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  http.POST(data);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
+  int httpCode = http.POST(data);
+  
+  Serial.println(httpCode);  
   http.writeToStream(&Serial);
   http.end();
 }
