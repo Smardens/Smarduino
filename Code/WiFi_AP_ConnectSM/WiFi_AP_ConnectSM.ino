@@ -27,10 +27,10 @@
 
 //Network Config Meta Data
 IPAddress ip(192,168,1,101); //Use this IPAddress for SM01
-//IPAddress ip(192,168,1,102); //Use the IPAddress for SM02
-//IPAddress ip(192,168,1,103); //Use the IPAddress for SM03
-//IPAddress ip(192,168,1,104); //Use the IPAddress for SM04
-//IPAddress ip(192,168,1,105); //Use the IPAddress for SM05
+//IPAddress ip(192,168,1,102); //Use this IPAddress for SM02
+//IPAddress ip(192,168,1,103); //Use this IPAddress for SM03
+//IPAddress ip(192,168,1,104); //Use this IPAddress for SM04
+//IPAddress ip(192,168,1,105); //Use this IPAddress for SM05
 
 IPAddress gateway(192,168,1,254);
 IPAddress subnet(255,255,255,0);
@@ -38,10 +38,10 @@ IPAddress subnet(255,255,255,0);
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/sm";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 5;
+int sleepInterval = 180; //Change this value for how many minutes to hibernate for: 180 is 3 hours
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
-int failConnectRetryInterval = 2;
+int failConnectRetryInterval = 2; //Two minutes between retry intervals
 int counter = 0;
 
 //Working Variables
@@ -52,6 +52,7 @@ int soilMoistureValue = 0;
 void setup()
 {
   ESP.eraseConfig();
+  WiFi.persistent(false);
   
   Serial.begin(115200);
   Serial.println();
@@ -75,7 +76,6 @@ void setup()
 
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
-
 
   Serial.println("Reading Soil Moisture Sensor\n");
   readSMSensor();
@@ -116,7 +116,7 @@ void sendHttpRequest() {
 void hibernate(int pInterval) {
   WiFi.disconnect();
   ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
-  delay(100);
+  delay(1000);
 }
 
 void loop() {}
