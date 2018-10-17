@@ -33,10 +33,10 @@ IPAddress subnet(255, 255, 255, 0);
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/dht";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 5;
+int sleepInterval = 180; //Change this value for how many minutes to hibernate for: 180 is 3 hours
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
-int failConnectRetryInterval = 2;
+int failConnectRetryInterval = 2; //Two minutes between retry intervals
 int counter = 0;
 
 //Working Variables
@@ -49,7 +49,8 @@ DHT dht;
 void setup()
 {
   ESP.eraseConfig();
-
+  WiFi.persistent(false);
+  
   Serial.begin(115200);
   Serial.println();
 
