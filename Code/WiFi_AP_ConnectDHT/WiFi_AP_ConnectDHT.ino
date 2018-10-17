@@ -21,8 +21,8 @@
 //Sensor Meta Data
 //Change ID when uploading to different DHT Modules
 //Will also need to change static IP for each module
-#define SENSORID "DHT01"
-//#define SENSORID "DHT02"
+#define SENSORID "HT01"
+//#define SENSORID "HT02"
 #define DHTPIN 4
 
 //Network Config Meta Data
