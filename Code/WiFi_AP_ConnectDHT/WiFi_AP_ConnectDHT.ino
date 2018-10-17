@@ -24,11 +24,11 @@
 #define DHTPIN 4
 
 //Network Config Meta Data
-IPAddress ip(192, 168, 1, 120); //Use this IPAddress for DHT01
-//IPAddress ip(192,168,1,121); //Use the IPAddress for DHT02
+IPAddress ip(192,168,1,120); //Use this IPAddress for DHT01
+//IPAddress ip(192,168,1,121); //Use this IPAddress for DHT02
 
-IPAddress gateway(192, 168, 1, 254);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress gateway(192,168,1,254);
+IPAddress subnet(255,255,255,0);
 
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/dht";
@@ -45,6 +45,7 @@ float hum;
 float temp;
 
 DHT dht;
+
 
 void setup()
 {
