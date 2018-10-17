@@ -1,5 +1,3 @@
-#include <DHTesp.h>
-
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <DHT.h>
@@ -26,8 +24,8 @@
 #define DHTPIN 4
 
 //Network Config Meta Data
-IPAddress ip(192,168,1,120); //Use this IPAddress for DHT01
-//IPAddress ip(192,168,1,121); //Use this IPAddress for DHT02
+IPAddress ip(192, 168, 1, 120); //Use this IPAddress for DHT01
+//IPAddress ip(192,168,1,121); //Use the IPAddress for DHT02
 
 IPAddress gateway(192, 168, 1, 254);
 IPAddress subnet(255, 255, 255, 0);
@@ -35,10 +33,10 @@ IPAddress subnet(255, 255, 255, 0);
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/dht";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 180; //Change this value for how many minutes to hibernate for: 180 is 3 hours
+int sleepInterval = 5;
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
-int failConnectRetryInterval = 2; //Two minutes between retry intervals
+int failConnectRetryInterval = 2;
 int counter = 0;
 
 //Working Variables
@@ -51,7 +49,6 @@ DHT dht;
 void setup()
 {
   ESP.eraseConfig();
-  WiFi.persistent(false);
 
   Serial.begin(115200);
   Serial.println();
@@ -126,7 +123,7 @@ void sendHttpRequest() {
 void hibernate(int pInterval) {
   WiFi.disconnect();
   ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
-  delay(1000);
+  delay(100);
 }
 
 void loop() {}

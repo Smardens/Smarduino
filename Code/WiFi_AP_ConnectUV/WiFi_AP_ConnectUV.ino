@@ -25,7 +25,7 @@
 
 //Network Config Meta Data
 IPAddress ip(192,168,1,110); //Use this IPAddress for UV01
-//IPAddress ip(192,168,1,111); //Use this IPAddress for UV02
+//IPAddress ip(192,168,1,111); //Use the IPAddress for UV02
 
 IPAddress gateway(192,168,1,254);
 IPAddress subnet(255,255,255,0);
@@ -33,10 +33,10 @@ IPAddress subnet(255,255,255,0);
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/uv";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 180; //Change this value for how many minutes to hibernate for: 180 is 3 hours
+int sleepInterval = 60; //change this value for how many minutes to hibernate for
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
-int failConnectRetryInterval = 2; //Two minutes between retry intervals
+int failConnectRetryInterval = 2;
 int counter = 0;
 
 //Working Variables
@@ -47,8 +47,7 @@ float lightVal;
 void setup()
 {
   ESP.eraseConfig();
-  WiFi.persistent(false);
-   
+    
   Serial.begin(115200);
   Serial.println();
 
@@ -94,7 +93,8 @@ void readUVSensor() {
   {
     lightVal = 0.05 * analogVal - 1;
   }
-  
+
+  Serial.println("Analog Value: " + String(analogVal));
   Serial.println("UV Level: "+String(lightVal));
 }
 
@@ -120,7 +120,7 @@ void sendHttpRequest() {
 void hibernate(int pInterval) {
   WiFi.disconnect();
   ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
-  delay(1000);
+  delay(100);
 }
 
 void loop() {}
