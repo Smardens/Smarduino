@@ -39,8 +39,7 @@
 * Resources:
 * Clock: https://playground.arduino.cc/code/time
 * SD Card Module: https://www.arduino.cc/en/Reference/SD
-* Humidity/ Temperature Sensor: https://github.com/markruys/arduino-DHT
-* Software Serial: https://www.arduino.cc/en/Reference/SoftwareSerial
+* SPI: https://www.arduino.cc/en/Reference/SPI
 *
 * Modified Date:
 *
@@ -49,20 +48,16 @@
 */
 #include <TimeLib.h>
 #include <SD.h>
-#include <DHT.h>
+#include <SPI.h>
 
-//Pin Locations
-const int SOILMOISTURE1PIN = 0; //analog
-const int SOILMOISTURE2PIN = 1; //analog
-const int UV1PIN = 2; //analog
+//Define Pin Locations
 #define RX 0 //digital for serial communication
 #define TX 1 //digital for serial communication 
-#define DHT1PIN 13 //digital
 #define SOLENOIDPIN 11 //digital
-#define SDPIN 9 //digital
+#define SDPIN 52 //digital
 
 
-            //Custom Values
+//Custom Values
 int REG_WATERING_DURATION = 10; //10- minuntes adjusted for slow drip for a regular watering duration
 int SHORT_WATERING_DURATION = 6; //6- minutes for a shorter watering duration
 
@@ -75,9 +70,6 @@ int CURRENT_YEAR = 2018;//current year
 
 int CURRENT_HOUR = 7; //current hour of the day
 int CURRENT_MINUTE = 40;//current minute of the day
-
-            //Using class to capture both humidity and temperature values
-DHT dht;
 
 //Durations
 unsigned long duration1 = 1000UL * 60 * REG_WATERING_DURATION;
@@ -125,15 +117,15 @@ bool smardensGarden = false;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(300);
+  Serial.print("COME ON");
 
   /*Pin setup*/
   pinMode(SOLENOIDPIN, OUTPUT); //set solenoid pin to control valve
   pinMode(RX, INPUT); //set receiving pin as the input
   pinMode(TX, OUTPUT); //set the transmiting pin as the output
-  dht.setup(DHT1PIN); //set dht pin
 
-            /*SD and Directory setup*/
+  /*SD and Directory setup*/
   SDSetup();
 
   setTime(CURRENT_HOUR, CURRENT_MINUTE, 00, CURRENT_MONTH, CURRENT_DAY, CURRENT_YEAR); // example: 16:00:00 10-10-2018 
@@ -221,7 +213,7 @@ void buildDateFolder()
   else { //add to the existing sub-directory
     Serial.println("Date Folder alread exists");
   }
-  getSetTime();
+  timeCapture = getSetTime();
 
   // create sub-directory based on time
   // time should be Military time
