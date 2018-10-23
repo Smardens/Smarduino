@@ -29,7 +29,7 @@ To customize the pin inputs, change the following variables:
 -SOLENOIDPIN: to the digital pin on the Arduino
 -SDPIN: to digital pin on arduino
 
-Date: 10/19/18
+Date: 10/23/18
 
 Created by:
 Caitlin Rubia
@@ -66,12 +66,12 @@ int WATERING_TIME_1 = 8; //8AM - hour of the day in the morning (regular waterin
 int WATERING_TIME_2 = 18; //6PM- hour of the day in the afternoon (extra watering time)
 
 int CURRENT_MONTH = 10;//current month
-int CURRENT_DAY = 18;//current day
+int CURRENT_DAY = 23;//current day
 int CURRENT_YEAR = 2018;//current year
 int YEAR_ABBR = 18; //second part of the current year (ie: year 2018, enter 18)
 
-int CURRENT_HOUR = 7; //current hour of the day
-int CURRENT_MINUTE = 40;//current minute of the day
+int CURRENT_HOUR = 12; //current hour of the day
+int CURRENT_MINUTE = 45;//current minute of the day
 
 //Determinant Values for Soil Moisture Dryness Intervals
 const int AIRVALUE = 785;
@@ -149,7 +149,7 @@ void buildRoot()
 /*Creates the date/time folder containing the files*/
 void buildSubRoot()
 {
-  sprintf(dirName, "%s/%d_%d_%d/%d_%d_%d", rootPath, month(), day(), YEAR_ABBR, hour(), minute(), second());
+  sprintf(dirName, "%s/%d_%d_%d/%d_%d", rootPath, month(), day(), YEAR_ABBR, hour(), minute());
   if (buildValid(dirName)) {
     Serial.println("Creating Date/Time Folder");
     path = String(dirName); //the filepath that contains the mm_dd_yy folder and the hh_mm_ss folder in it
@@ -307,7 +307,7 @@ void waterSet()
   secondWater(currentDuration);
 }
 
-/*Test Valve*/
+/*Test Water Valve*/
 void test() {
   digitalWrite(SOLENOIDPIN, HIGH); //open valve
   delay(1000 * 30); //1000 = 1 second
@@ -321,9 +321,8 @@ void impl() {
     buildSubRoot(); //builds subfolders based on the current date and time
     Serial.println("Arduino is listening");
     data = Serial1.readString(); //String data = "Sensor ID: TY##" 
-    String idType = data.substring(11, 12); //"TY"
-    String idNum = data.substring(13, 14); //"##"
-    Serial.println(">>>>>>>>>>>>>>Start>>>>>>>>>>>>> \n" + data + "\n>>>>>>>>>>>>>>END>>>>>>>>>>>>>");
+    String idType = data.substring(11, 13); //"TY"
+    String idNum = data.substring(13, 15); //"##"
     Serial.println("idType: " + idType);
     Serial.println("idNum: " + idNum);
     sensorReading(idType, idNum);
