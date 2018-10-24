@@ -48,7 +48,6 @@ int counter = 0;
 String data;
 int soilMoistureValue = 0;
 
-
 void setup()
 {
   ESP.eraseConfig();
@@ -62,16 +61,16 @@ void setup()
   WiFi.begin(AP_SSID, AP_PASS);
 
   Serial.print("Connecting");
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    if(counter > 20){
-       Serial.println("Can't Find AP.\n [Sleeping]");    
-       hibernate(failConnectRetryInterval);
-    }
-    delay(500);
-    Serial.print(".");
-    counter++;
-  }
+//  while (WiFi.status() != WL_CONNECTED)
+//  {
+//    if(counter > 20){
+//       Serial.println("Can't Find AP.\n [Sleeping]");    
+//       hibernate(failConnectRetryInterval);
+//    }
+//    delay(500);
+//    Serial.print(".");
+//    counter++;
+//  }
   Serial.println();
 
   Serial.print("Connected, IP address: ");
@@ -86,7 +85,7 @@ void setup()
   Serial.println();
   Serial.println("[Sensor Reading Finished]");
   Serial.println("[Sleeping]");
-  hibernate(sleepInterval);
+  //hibernate(sleepInterval);
 }
 
 void readSMSensor() {
@@ -119,4 +118,7 @@ void hibernate(int pInterval) {
   delay(1000);
 }
 
-void loop() {}
+void loop() {
+  readSMSensor();  
+  delay(1000);
+}

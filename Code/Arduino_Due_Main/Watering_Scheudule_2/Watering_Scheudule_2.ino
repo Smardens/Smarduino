@@ -70,8 +70,8 @@ int CURRENT_DAY = 23;//current day
 int CURRENT_YEAR = 2018;//current year
 int YEAR_ABBR = 18; //second part of the current year (ie: year 2018, enter 18)
 
-int CURRENT_HOUR = 12; //current hour of the day
-int CURRENT_MINUTE = 45;//current minute of the day
+int CURRENT_HOUR = 4; //current hour of the day
+int CURRENT_MINUTE = 19;//current minute of the day
 
 //Determinant Values for Soil Moisture Dryness Intervals
 const int AIRVALUE = 785;
@@ -94,6 +94,8 @@ bool smardensGarden = false; //boolean to establish valid file pathways
 
 void setup()
 {
+ 
+  
   /*Setting the current time*/
   setTime(CURRENT_HOUR, CURRENT_MINUTE, 00, CURRENT_DAY, CURRENT_MONTH, CURRENT_YEAR); // example: 16:00:00 18-10-2018
 
@@ -107,6 +109,8 @@ void setup()
   /*SD and Directory setup*/
   SDSetup();
   buildRoot();
+  //water test
+  test();
 }
 
 /*Initializing SD card*/
@@ -310,7 +314,7 @@ void waterSet()
 /*Test Water Valve*/
 void test() {
   digitalWrite(SOLENOIDPIN, HIGH); //open valve
-  delay(1000 * 30); //1000 = 1 second
+  delay(1000 * 120); //1000 = 1 second
   digitalWrite(SOLENOIDPIN, LOW); //close valve
 }
 
@@ -331,7 +335,5 @@ void impl() {
 
 void loop()
 {
-  //test();
   impl();
-
 }

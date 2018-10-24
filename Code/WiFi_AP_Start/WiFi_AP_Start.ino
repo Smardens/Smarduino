@@ -24,7 +24,6 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-  WiFi.mode(WIFI_AP_STA);
   Serial.println();
 
   setupAP();
