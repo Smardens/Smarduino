@@ -246,6 +246,7 @@ String checkDry(int dryness)
   {
     return "Dry";
   }
+  else return "Uknown"; // handles when dryness doesnt fit within the intervals
 }
 
 /*Normal watering schedule with normal water amount*/
@@ -280,7 +281,7 @@ void waterSet()
 
   dryness = (soil1 + soil2 + soil3 + soil4 + soil5) / 5; //average of 5 soil moisture level
 
-                               //5 minute before normal watering schedule, check the soil moisture level to determine length of watering
+  //5 minute before normal watering schedule, check the soil moisture level to determine length of watering
   if (hour() == WATERING_TIME_2 - 1 && minute() == 55 && second() == 0) {
     check = checkDry(dryness);
     if (check == "Dry") {
@@ -289,8 +290,11 @@ void waterSet()
     else if (check == "Moist") {
       currentDuration = SHORT_WATERING_DURATION;
     }
-    else {
+    else if (check == "Wet"){
       currentDuration = 0; //don't open if the field is super wet
+    }
+    else {
+      currentDuration = ;
     }
   }
 

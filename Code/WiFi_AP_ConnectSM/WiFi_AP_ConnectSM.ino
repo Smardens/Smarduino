@@ -18,16 +18,16 @@
 //Sensor Meta Data
 //Change ID when uploading to different Soil Moisture Modules
 //Will also need to change static IP for each module
-#define SENSORID "SM01"
-//#define SENSORID "SM02"
+//#define SENSORID "SM01"
+#define SENSORID "SM02"
 //#define SENSORID "SM03"
 //#define SENSORID "SM04"
 //#define SENSORID "SM05"
 #define SENSOR_PIN A0 //Soil Moisture sensor is on the analog input
 
 //Network Config Meta Data
-IPAddress ip(192,168,1,101); //Use this IPAddress for SM01
-//IPAddress ip(192,168,1,102); //Use this IPAddress for SM02
+//IPAddress ip(192,168,1,101); //Use this IPAddress for SM01
+IPAddress ip(192,168,1,102); //Use this IPAddress for SM02
 //IPAddress ip(192,168,1,103); //Use this IPAddress for SM03
 //IPAddress ip(192,168,1,104); //Use this IPAddress for SM04
 //IPAddress ip(192,168,1,105); //Use this IPAddress for SM05
@@ -38,7 +38,7 @@ IPAddress subnet(255,255,255,0);
 //Local ESP web-server address
 String serverHost = "http://192.168.1.100:80/sm";
 // DEEP_SLEEP Timeout interval
-int sleepInterval = 180; //Change this value for how many minutes to hibernate for: 180 is 3 hours
+int sleepInterval = 1; //Change this value for how many minutes to hibernate for: 180 is 3 hours
 
 // DEEP_SLEEP Timeout interval when connecting to AP fails
 int failConnectRetryInterval = 2; //Two minutes between retry intervals
@@ -50,6 +50,7 @@ int soilMoistureValue = 0;
 
 void setup()
 {
+  Serial.println("ESP for " + String(SENSORID));
   ESP.eraseConfig();
   WiFi.persistent(false);
   
@@ -77,6 +78,7 @@ void setup()
   Serial.println(WiFi.localIP());
 
   Serial.println("Reading Soil Moisture Sensor\n");
+  delay(1000);
   readSMSensor();
   Serial.println("Constructing DATA String.\n");
   buildDataStream();
@@ -85,7 +87,7 @@ void setup()
   Serial.println();
   Serial.println("[Sensor Reading Finished]");
   Serial.println("[Sleeping]");
-  //hibernate(sleepInterval);
+  hibernate(sleepInterval);
 }
 
 void readSMSensor() {
@@ -114,11 +116,9 @@ void sendHttpRequest() {
 
 void hibernate(int pInterval) {
   WiFi.disconnect();
-  ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
+  ESP.deepSleep(60 * 1000000 * pInterval, WAKE_RFCAL); 
   delay(1000);
 }
 
 void loop() {
-  readSMSensor();  
-  delay(1000);
 }
