@@ -16,8 +16,8 @@ Get it? Smardens and Arduino....Smarduino??
 * Pick your desired development board in Tools -> Board
 
 ### Arduino IDE Libraries
-* All required libraries should be in the "libraries" folder
-* If you receive "Missing Library" errors please submit an issue ticket so can help you resolve the problem
+* All required libraries are located in the "libraries" folder
+  * If you receive "Missing Library" errors please submit issue tickets so we can resolve them
 
 #### ESP8266 Settings:
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
