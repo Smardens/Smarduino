@@ -14,7 +14,7 @@ Get it? Smardens and Arduino....Smarduino??
 * Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
 * After installation, select your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
-
+  * [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
 #### ESP8266 Settings:
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
 ```
@@ -35,7 +35,7 @@ Erase Flash: "All Flash Contents"
 Board: "Arduino Due (Programming Port)"
 ```
 
-## Mini Cheatsheet for Git Instructions:
+## Mini-Cheatsheet for Git Instructions:
 #### Terms:
 * **Master Branch**: branch with latest working code (main program)
 * **Remote Branch**: your current local branch
