@@ -7,13 +7,13 @@ Get it? Smardens and Arduino....Smarduino??
 * [Postman](https://www.getpostman.com/)
 
 ### Arduino IDE Settings for Development:
-1. Open the Arduino IDE and go to File -> Preferences
-2. Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
-3. In Tools -> Board select "Boards Managers..."
-  1. Find "ESP8266" and press the install button
-  2. Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
-4. After installation, your IDE is ready for development on the ESP and Arduino Due
-5. Pick your desired development board in Tools -> Board
+* Open the Arduino IDE and go to File -> Preferences
+* Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
+* In Tools -> Board select "Boards Managers..."
+  * Find "ESP8266" and press the install button
+  * Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
+* After installation, your IDE is ready for development on the ESP and Arduino Due
+* Pick your desired development board in Tools -> Board
 
 ### Arduino IDE Libraries
 * All required libraries should be in the "libraries" folder
