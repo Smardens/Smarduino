@@ -59,12 +59,6 @@ git checkout -b {newbranchname}
 git checkout {branchname}
 ```
 
-### Pushing to Your Branch for the First Time:
-*must set upstream so that github can track it* 
-```
-git push -u origin {branchname}    // -u argument is only necessary in your first push on a new branch
-```
-
 ### Pushing to a Branch:
 *whenever you push, you should ALWAYS **ADD**, **COMMIT**, then **PULL** first*
 ```
@@ -75,6 +69,12 @@ git pull origin master       // pulls code FROM master TO whichever branch you'r
 git push                     // push to your upstream branch
 ```
 **Order of Operations:   	 Add -> Commit -> Pull -> Push**
+
+### Pushing to Your Branch for the First Time:
+*must set upstream so that github can track it* 
+```
+git push -u origin {branchname}    // -u argument is only necessary in your first push on a new branch
+```
 
 ### View Status of Modified Files:
 ```
