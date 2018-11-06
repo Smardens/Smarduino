@@ -21,7 +21,9 @@
 #define SENSORID "UV01"
 //#define SENSORID "UV02" 
 #define SENSOR_PIN A0 //UV sensor is on the analog input
-#define MIN_VAL 20
+#define MIN_VAL 550 //Minimum amount of voltage when light is extremely dark- room with no light
+#define MAX_VAL 820 //Maximum amount of voltage when light is extremely bright- direct sunlight
+#define INTERVAL 10 //UV scale will be on a 0 to 10 scale
 
 //Network Config Meta Data
 IPAddress ip(192,168,1,110); //Use this IPAddress for UV01
@@ -41,13 +43,11 @@ int counter = 0;
 
 //Working Variables
 String data;
-float lightVal;
-
+int lightVal;
 
 void setup()
 {
   ESP.eraseConfig();
-  WiFi.persistent(false);
     
   Serial.begin(115200);
   Serial.println();
@@ -86,18 +86,69 @@ void setup()
 
 void readUVSensor() {
   delay(1000);
-  int analogVal = analogRead(SENSOR_PIN);
-  if (analogVal < MIN_VAL)
+  float scale = (MAX_VAL - MIN_VAL);
+  for (int i = 0; i <= 10; i++) {
+    
+    if (analogVal < MIN_VAL){
+      lightVal = i;
+      }
+    if (analogVal >= MIN_VAL &&  < ){
+      lightVal = i;
+      }
+  }
+  //Serial.println("Scale: " + String(scale));
+  int analogVal = analogRead(SENSOR_PIN); // scale of voltage reading is from MAX_VAL (extremely bright) to MIN_VAL (completely dark)
+  
+  if (analogVal < MIN_VAL) //scale of voltage readings to UV sensor readings is distributed by a bell curve
   {
     lightVal = 0;
   }
-  else
+  else if (analogVal <= MIN_VAL )//Range: 0 - 2.5; Increment by: 2.5
   {
-    lightVal = 0.05 * analogVal - 1;
+    lightVal = 1; 
+  }
+  else if ( analogVal <= MIN_VAL + (scale/54) )//Range: 2.5 - 7.5; Increment by: 5 
+  {
+    lightVal = 2; 
+  }
+  else if ( analogVal <= MIN_VAL + (scale/18) )//Range: 7.5 - 22.5; Increment by: 15
+  {
+    lightVal = 3; 
+  }
+  else if ( analogVal  <= MIN_VAL + (scale/6) )//Range: 22.5 - 67.5; Increment by: 45
+  {
+    lightVal = 4; 
+  }
+  else if ( analogVal <= MIN_VAL + (scale/2) )//Range: 67.5 - 202.5; Increment by: 135
+  {
+    lightVal = 5; 
+  }
+  else if ( analogVal <= MIN_VAL + (scale/2) + (scale/6) )//Range: 202.5 - 247.5; Increment by: 45
+  {
+    lightVal = 6; 
+  }
+  else if ( analogVal <= MIN_VAL + (scale/2) +  (scale/18) )//Range: 247.5 - 262.5; Increment by: 15
+  {
+    lightVal = 7; 
+  }
+  else if (analogVal <= MIN_VAL + (scale/2) +  (scale/54) )//Range: 262.5 - 267.5; Increment by: 5
+  {
+    lightVal = 8; 
+  }
+  else if (analogVal <= MIN_VAL + (scale/2) +  (scale/216) )//Range: 267.5 - 268.75; Increment by: 1.25
+  {
+    lightVal = 9; 
+  }
+  else if ( analogVal <= MAX_VAL ) //Range: 268.75 - 270; Increment by: 1.25 
+  {
+    lightVal = 10; 
+  }
+  else {
+    lightVal = 11; //above the maximum
   }
 
   Serial.println("Analog Value: " + String(analogVal));
-  Serial.println("UV Level: "+String(lightVal));
+  Serial.println("UV Level: "+ String(lightVal));
 }
 
 void buildDataStream() {
