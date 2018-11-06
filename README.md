@@ -10,8 +10,8 @@ Get it? Smardens and Arduino....Smarduino??
 1. Open the Arduino IDE and go to File -> Preferences
 2. Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
 3. In Tools -> Board select "Boards Managers..."
-  * Find "ESP8266" and press the install button
-  * Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
+  1. Find "ESP8266" and press the install button
+  2. Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
 4. After installation, your IDE is ready for development on the ESP and Arduino Due
 5. Pick your desired development board in Tools -> Board
 
