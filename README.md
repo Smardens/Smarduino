@@ -10,9 +10,8 @@ Get it? Smardens and Arduino....Smarduino??
 * Open the Arduino IDE and go to File -> Preferences
 * Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
 * In Tools -> Board select "Boards Managers..."
-* Find "ESP8266" and press the install button
-  * [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
-* Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
+  * Find "ESP8266" and press the install button
+  * Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
 * After installation, select your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
@@ -29,7 +28,8 @@ CPU Frequency: "160 MHz"
 Upload Speed: "115200"
 Erase Flash: "All Flash Contents"
 ```
-
+* [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
+  
 #### Arduino Due Settings:
 *We are developing on the [Arduino Due](https://store.arduino.cc/usa/arduino-due)*
 ```
