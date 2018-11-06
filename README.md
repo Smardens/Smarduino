@@ -15,6 +15,7 @@ Get it? Smardens and Arduino....Smarduino??
 * After installation, select your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
+
 * [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
 #### ESP8266 Settings:
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
