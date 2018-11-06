@@ -17,6 +17,7 @@
 *  -TIME: to the current time when the Arduino is powered
 *  -REG_WATERING_DURATION: to the number of minutes the garden is watered if the soil is dry
 *  -SHORT_WATERING_DURATION: to the number of minutes the garden is watered if the soil is moist
+*  -WATERING_UKNOWN: to the number of minutes the garden is watered if the sensor readings don't fit within the intervals
 *
 * To customize the pin inputs, change the following variables:
 *  -SOLENOIDPIN: to the digital pin on the Arduino
@@ -64,7 +65,8 @@ const int UV1PIN = 2; //analog
 
             //Custom Values
 int REG_WATERING_DURATION = 10; //10- minuntes adjusted for slow drip for a regular watering duration
-int SHORT_WATERING_DURATION = 6; //6- minutes for a shorter watering duration
+int SHORT_WATERING_DURATION = 6; //6- minutes adjusted for a shorter watering duration
+int WATERING_ UKNOWN = 5; // 5- minutes adjusted for uknown sensor readings that don't fit within the intervals 
 
 int WATERING_TIME_1 = 8; //8AM - hour of the day in the morning (regular watering time)
 int WATERING_TIME_2 = 18; //6PM- hour of the day in the afternoon (extra watering time)
@@ -330,6 +332,7 @@ String checkDry(int dryness)
   {
     return "Dry";
   }
+  else return "Uknown";
 }
 
 /*Normal watering schedule with normal water amount*/
@@ -374,8 +377,11 @@ void waterSet()
     else if (check == "Moist") {
       currentDuration = SHORT_WATERING_DURATION;
     }
-    else {
+    else if (check == "Wet") {
       currentDuration = 0; //don't open if the field is super wet
+    }
+    else {
+      currentDuration = WATERING_ UKNOWN; //check == "Uknown"
     }
   }
   

@@ -24,7 +24,6 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-  WiFi.mode(WIFI_AP_STA);
   Serial.println();
 
   setupAP();
@@ -48,7 +47,7 @@ void setupAP() {
   IPAddress apIP = WiFi.softAPIP();
   Serial.print("\nAP IP address: ");
   Serial.print(apIP);
-
+  
   setupServer();
 }
 
@@ -66,7 +65,7 @@ void setupServer() {
 
 // Handling the / root web page from my server
 void handle_index() {
-  server.send(200, "text/plain", "fwuack outa my server yo!");
+  server.send(200, "text/plain", "ERROR! You don't have access to this server.");
 }
 
 // Handling the /uv page from my server
@@ -75,7 +74,7 @@ void handle_uv() {
   String value = server.arg("value");
 
   server.send(200, "text/plain", "Message received from client.");
-  Serial.println("Sensor ID: " + String(id) + "\nSensor Value: " + String(value));
+  Serial.println("Sensor ID: " + String(id) + "   |   Sensor Value: " + String(value));
 }
 
 // Handling the /sm page from my server
@@ -84,17 +83,17 @@ void handle_sm() {
   String value = server.arg("value");
 
   server.send(200, "text/plain", "Message received from client.");
-  Serial.println("Sensor ID: " + String(id) + "\nSensor Value: " + String(value));
+  Serial.println("Sensor ID: " + String(id) + "   |   Sensor Value: " + String(value));
 }
 
-// Handling the /dht page from my server
+// Handling the /dht page from my serverdht
 void handle_dht() {
   String id = server.arg("id");
   String tVal = server.arg("temp");
   String hVal = server.arg("hum");
 
   server.send(200, "text/plain", "Message received from client.");
-  Serial.println("Sensor ID: " + String(id) + "\nTemperature Value: " + String(tVal) + "\nHumidity Value: " + String(hVal));
+  Serial.println("Sensor ID: " + String(id) + "   |   Temperature Value: " + String(tVal) + " Humidity Value: " + String(hVal));
 }
 
 void handleNotFound() {

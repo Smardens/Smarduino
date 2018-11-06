@@ -90,6 +90,7 @@ void setup()
 }
 
 void readSMSensor() {
+  delay(1000);
   soilMoistureValue = analogRead(SENSOR_PIN);  //put Sensor insert into soil
   Serial.println("SM Level: " + String(soilMoistureValue));
 }
@@ -115,7 +116,7 @@ void sendHttpRequest() {
 
 void hibernate(int pInterval) {
   WiFi.disconnect();
-  ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
+  ESP.deepSleep(60 * 1000000 * pInterval, WAKE_RFCAL); 
   delay(1000);
 }
 

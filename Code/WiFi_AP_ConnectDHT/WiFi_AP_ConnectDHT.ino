@@ -90,7 +90,7 @@ void setup()
 }
 
 void readDHTSensor() {
-  delay(200);
+  delay(1000);
   hum = dht.getHumidity();
   temp = dht.getTemperature();
   if (isnan(hum) || isnan(temp)) {

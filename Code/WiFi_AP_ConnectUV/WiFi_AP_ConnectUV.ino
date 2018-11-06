@@ -47,6 +47,7 @@ float lightVal;
 void setup()
 {
   ESP.eraseConfig();
+  WiFi.persistent(false);
     
   Serial.begin(115200);
   Serial.println();
@@ -84,6 +85,7 @@ void setup()
 }
 
 void readUVSensor() {
+  delay(1000);
   int analogVal = analogRead(SENSOR_PIN);
   if (analogVal < MIN_VAL)
   {
