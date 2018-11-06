@@ -70,7 +70,7 @@ git pull origin master       // pulls code FROM master TO whichever branch you'r
         // **ALWAYS** pull before you push (make sure to add and commit first; to avoid overriding data)
 git push                     // push to your upstream branch
 ```
-*order of operations:   	 add -> commit -> pull -> push*
+**Order of Operations:   	 Add -> Commit -> Pull -> Push**
 
 ### View Status of Modified Files:
 ```
