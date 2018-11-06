@@ -11,12 +11,11 @@ Get it? Smardens and Arduino....Smarduino??
 * Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
 * In Tools -> Board select "Boards Managers..."
 * Find "ESP8266" and press the install button
+  * [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
 * Find "Arduino SAM Boards (32-bits ARM Cortex-M3)" and press the install button
 * After installation, select your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
-
-* [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful to you when developing the client and server
 #### ESP8266 Settings:
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
 ```
@@ -44,25 +43,25 @@ Board: "Arduino Due (Programming Port)"
 * **Upstream Branch**: branch that can be tracked by GitHub
 * **Origin**: perform operation on the source of your target
 
-### going to a *new* branch:
+### Changing to a *New* Branch:
 *making a new branch with all your current work*
 ```
 git checkout -b {newbranchname}
 ```
 
-### going to a branch:
+### Changing to a Branch:
 *this is your private workspace*
 ```
 git checkout {branchname}
 ```
 
-### when pushing to your branch for the first time:
+### Pushing to Your Branch for the First Time:
 *must set upstream so that github can track it* 
 ```
 git push -u origin {branchname}    // -u argument is only necessary in your first push on a new branch
 ```
 
-### pushing to a branch:
+### Pushing to a Branch:
 *whenever you push, you should ALWAYS **ADD**, **COMMIT**, then **PULL** first*
 ```
 git add .                    // period means "everything", you can optionally chose to add only specific files
@@ -73,12 +72,12 @@ git push                     // push to your upstream branch
 ```
 *order of operations:   	 add -> commit -> pull -> push*
 
-### see status of files modified:
+### View Status of Modified Files:
 ```
 git status
 ```
 
-### see specific changes within files:
+### View Specific Changes Within Files:
 ```
 git diff                   // overview of things changed
 git diff {filename}        // see specific changes in file 
@@ -87,7 +86,7 @@ git diff {branchname}      // view differences between branches
 
 ```
 
-### see list of commits:
+### View List of Commits:
 ```
 git log      // view commit log
 git checkout {first 6 characters of chosen checkpoint hash} -b {new branch name}  // checkout log to new branch
