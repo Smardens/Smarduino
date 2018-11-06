@@ -41,7 +41,7 @@ Board: "Arduino Due (Programming Port)"
 ```
 
 ## Mini-Cheatsheet for Git Instructions:
-#### Terms:
+#### Helpful Definitions:
 * **Master Branch**: branch with latest working code (main program)
 * **Remote Branch**: your current local branch
 * **Upstream Branch**: branch that can be tracked by GitHub
