@@ -15,6 +15,10 @@ Get it? Smardens and Arduino....Smarduino??
 * After installation, your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
+### Arduino IDE Libraries
+* All required libraries should be in the "libraries" folder
+* If you receive "Missing Library" errors please submit an issue ticket so can help you resolve the problem
+
 #### ESP8266 Settings:
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
 ```
