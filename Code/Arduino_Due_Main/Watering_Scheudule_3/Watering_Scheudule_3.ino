@@ -60,18 +60,18 @@ Modified by:
 //Custom Values
 int REG_WATERING_DURATION = 10; //10- minuntes for a regular watering duration (adjusted for weak drip irrigation)
 int SHORT_WATERING_DURATION = 6; //6- minutes for a shorter watering duration (adjusted for weak drip irrigation)
-int WATERING_ NOTKNOWN = 5; // 5- minutes for watering when sensor readings don't fit within the intervals 
+int WATERING_NOTKNOWN = 5; // 5- minutes for watering when sensor readings don't fit within the intervals 
 
 
 int WATERING_TIME_1 = 8; //8AM - hour of the day in the morning (regular watering time)
 int WATERING_TIME_2 = 18; //6PM- hour of the day in the afternoon (extra watering time)
 
 int CURRENT_MONTH = 10;//current month
-int CURRENT_DAY = 23;//current day
+int CURRENT_DAY = 30;//current day
 int CURRENT_YEAR = 2018;//current year
 int YEAR_ABBR = 18; //second part of the current year (ie: year 2018, enter 18)
 int CURRENT_HOUR = 4; //current hour of the day
-int CURRENT_MINUTE = 19;//current minute of the day
+int CURRENT_MINUTE = 40;//current minute of the day
 
 //Soil Moisture value determinants for dryness
 int soil1, soil2, soil3, soil4, soil5;
@@ -109,7 +109,7 @@ void setup()
   buildRoot();
  
   /*Validate water solenoid valve is working with irrigation*/
-  initialWaterTest();
+  //initialWaterTest();
 }
 
 /*Initializing SD card*/
@@ -293,7 +293,7 @@ void waterSet()
       currentDuration = 0; //don't open if the field is super wet
     }
     else if (check == "Unknown"){
-      currentDuration = WATERING_ NOTKNOWN; 
+      currentDuration = WATERING_NOTKNOWN; 
     }
     else{
       currentDuration = WATERING_NOTKNOWN; //handles for precaution
