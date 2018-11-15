@@ -1,52 +1,52 @@
 /**
-SMARDENS- THE RESILIENT SMART GARDEN
-SMARDUINO 2.1.0
+  SMARDENS- THE RESILIENT SMART GARDEN
+  SMARDUINO 2.1.0
 
-Arduino: DUE
-Summary: Watering Schedule and Hardware Valve/Sensor Test
-The Arduino will obtain data from the Wifi Module ESP 8266 Huzzah through serial communication.
-It will read and store the 5 soil moisture sensor, 2 UV sensor, and 2 Humidity/Temperature sensor
-readings every three hours; therefore it will read and store 8 data readings per sensor per day.
-Based on the algorithm to determine whether to water, the Arduino is programmed to water at time1
-for a regular water, and if the soil is still dry it will water again at time2.
+  Arduino: DUE
+  Summary: Watering Schedule and Hardware Valve/Sensor Test
+  The Arduino will obtain data from the Wifi Module ESP 8266 Huzzah through serial communication.
+  It will read and store the 5 soil moisture sensor, 2 UV sensor, and 2 Humidity/Temperature sensor
+  readings every three hours; therefore it will read and store 8 data readings per sensor per day.
+  Based on the algorithm to determine whether to water, the Arduino is programmed to water at time1
+  for a regular water, and if the soil is still dry it will water again at time2.
 
-Notes:
-To customize the schedule, change the following variables:
--REG_WATERING_DURATION: to the number of minutes the garden is watered if the soil is dry
--SHORT_WATERING_DURATION: to the number of minutes the garden is watered if the soil is moist
--WATERING_TIME_1: to the hour of the day for the regular watering time (ideally morning, ie: 8AM, enter 8)
--WATERING_TIME_2: to the hour of the day for the extra watering time (ideally afternoon; ie: 5PM, enter 17)
--CURRENT_MONTH: setting the month
--CURRENT_DAY: setting the day
--CURRENT_YEAR: setting the year
--YEAR_ABBR: second part of the current year (ie: year 2018, enter 18)
--CURRENT_HOUR: setting the hour
--CURRENT_MINUTE: setting the minutes
+  Notes:
+  To customize the schedule, change the following variables:
+  -REG_WATERING_DURATION: to the number of minutes the garden is watered if the soil is dry
+  -SHORT_WATERING_DURATION: to the number of minutes the garden is watered if the soil is moist
+  -WATERING_TIME_1: to the hour of the day for the regular watering time (ideally morning, ie: 8AM, enter 8)
+  -WATERING_TIME_2: to the hour of the day for the extra watering time (ideally afternoon; ie: 5PM, enter 17)
+  -CURRENT_MONTH: setting the month
+  -CURRENT_DAY: setting the day
+  -CURRENT_YEAR: setting the year
+  -YEAR_ABBR: second part of the current year (ie: year 2018, enter 18)
+  -CURRENT_HOUR: setting the hour
+  -CURRENT_MINUTE: setting the minutes
 
 
-To customize the pin inputs, change the following variables:
--SOLENOIDPIN: to the digital pin on the Arduino
--SDPIN: to digital pin on arduino
+  To customize the pin inputs, change the following variables:
+  -SOLENOIDPIN: to the digital pin on the Arduino
+  -SDPIN: to digital pin on arduino
 
-Date: 10/26/18
+  Date: 10/26/18
 
-Created by:
-Caitlin Rubia
-Xinyi Chen
-Brian Powell
-Israel Grogin
+  Created by:
+  Caitlin Rubia
+  Xinyi Chen
+  Brian Powell
+  Israel Grogin
 
-Reference:
-https://smardens.com/
+  Reference:
+  https://smardens.com/
 
-Resources:
-Clock: https://playground.arduino.cc/code/time
-SD Card Module: https://www.arduino.cc/en/Reference/SD
-SPI: https://www.arduino.cc/en/Reference/SPI
+  Resources:
+  Clock: https://playground.arduino.cc/code/time
+  SD Card Module: https://www.arduino.cc/en/Reference/SD
+  SPI: https://www.arduino.cc/en/Reference/SPI
 
-Modified Date:
+  Modified Date:
 
-Modified by:
+  Modified by:
 
 */
 #include <TimeLib.h>
@@ -60,7 +60,7 @@ Modified by:
 //Custom Values
 int REG_WATERING_DURATION = 10; //10- minuntes for a regular watering duration (adjusted for weak drip irrigation)
 int SHORT_WATERING_DURATION = 6; //6- minutes for a shorter watering duration (adjusted for weak drip irrigation)
-int WATERING_NOTKNOWN = 5; // 5- minutes for watering when sensor readings don't fit within the intervals 
+int WATERING_NOTKNOWN = 5; // 5- minutes for watering when sensor readings don't fit within the intervals
 
 
 int WATERING_TIME_1 = 8; //8AM - hour of the day in the morning (regular watering time)
@@ -88,7 +88,7 @@ const int WATERVALUE = 391;
 String data; //the sensor date taht will be stored
 File dataFile; //txt. file being created
 const char *rootPath = "Smardens"; //root folder name- Smardens
-char dirName[100]; //filepath size allocated 
+char dirName[100]; //filepath size allocated
 String path = ""; //filepath name
 bool smardensGarden = false; //boolean to establish valid file pathways
 
@@ -107,9 +107,9 @@ void setup()
   /*SD and Directory setup*/
   SDSetup();
   buildRoot();
- 
+
   /*Validate water solenoid valve is working with irrigation*/
-  //initialWaterTest();
+  initialWaterTest();
 }
 
 /*Initializing SD card*/
@@ -237,11 +237,11 @@ String checkDry(int dryness)
   {
     return "Wet";
   }
-  else if (dryness >(WATERVALUE + intervals) && dryness < (AIRVALUE - intervals))
+  else if (dryness > (WATERVALUE + intervals) && dryness < (AIRVALUE - intervals))
   {
     return "Moist";
   }
-  else if (dryness < AIRVALUE && dryness >(AIRVALUE - intervals))
+  else if (dryness < AIRVALUE && dryness > (AIRVALUE - intervals))
   {
     return "Dry";
   }
@@ -253,10 +253,20 @@ void firstWater(int duration)
 {
   if (hour() == WATERING_TIME_1 && minute() == 0 && second() == 0)
   {
+    dataFile = SD.open(path + "/watering.txt", FILE_WRITE);
+    if (dataFile) {
+      Serial.println("Text file is open and will be written in");
+      dataFile.println("First Watering at: " + String(hour()) + ":" + String(minute()));
+      dataFile.close();
+    }
+    else {
+      Serial.println("Text file couldn't be opened");
+    }
     digitalWrite(SOLENOIDPIN, HIGH); //open valve
     delay(duration);
     digitalWrite(SOLENOIDPIN, LOW); //close valve
   }
+
 }
 
 /*Second watering schedule if needed*/
@@ -264,14 +274,24 @@ void secondWater(int duration)
 {
   if (hour() == WATERING_TIME_2 && minute() == 0 && second() == 0)
   {
+    dataFile = SD.open(path + "/watering.txt", FILE_WRITE);
+    if (dataFile) {
+      Serial.println("Text file is open and will be written in");
+      dataFile.println("First Watering at: " + String(hour()) + ":" + String(minute()));
+      dataFile.close();
+    }
+    else {
+      Serial.println("Text file couldn't be opened");
+    }
     digitalWrite(SOLENOIDPIN, HIGH); //open valve
     delay(duration); //1000 = 1 second
     digitalWrite(SOLENOIDPIN, LOW); //close valve
   }
+
 }
 
 /*Checking the soil moisture level 5 minutes before scheduled watering time to determine
-water durations and number of times watered*/
+  water durations and number of times watered*/
 void waterSet()
 {
   int currentDuration;
@@ -289,15 +309,15 @@ void waterSet()
     else if (check == "Moist") {
       currentDuration = SHORT_WATERING_DURATION;
     }
-    else if (check == "Wet"){
+    else if (check == "Wet") {
       currentDuration = 0; //don't open if the field is super wet
     }
-    else if (check == "Unknown"){
-      currentDuration = WATERING_NOTKNOWN; 
+    else if (check == "Unknown") {
+      currentDuration = WATERING_NOTKNOWN;
     }
-    else{
+    else {
       currentDuration = WATERING_NOTKNOWN; //handles for precaution
-      }
+    }
   }
 
   // second watering check time
@@ -322,15 +342,21 @@ void initialWaterTest() {
   digitalWrite(SOLENOIDPIN, HIGH); //open valve
   delay(1000 * 60 * WATERING_NOTKNOWN); //1000 = 1 second
   digitalWrite(SOLENOIDPIN, LOW); //close valve
+  buildSubRoot();
+  dataFile = SD.open(path + "/watering.txt", FILE_WRITE);
+  if (dataFile) {
+    Serial.println("Text file is open and will be written in");
+    dataFile.println("Test Watering at: " + String(hour()) + ":" + String(minute()));
+    dataFile.close();
+  }
 }
-
 /*Sensor Readings from Wifi Module ESP 8266 Huzzah- Access Point*/
 void waterSystem() {
   waterSet(); //waters at certain time for certain durations
   while (Serial1.available() > 0) { //reading from WIFI Module ESP 8266 Huzzah acting as Access Point
     buildSubRoot(); //builds subfolders based on the current date and time
     Serial.println("Arduino is listening");
-    data = Serial1.readString(); //String data = "Sensor ID: TY##" 
+    data = Serial1.readString(); //String data = "Sensor ID: TY##"
     String idType = data.substring(11, 13); //"TY"
     String idNum = data.substring(13, 15); //"##"
     Serial.println("idType: " + idType);

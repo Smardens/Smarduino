@@ -87,15 +87,7 @@ void setup()
 void readUVSensor() {
   delay(1000);
   float scale = (MAX_VAL - MIN_VAL);
-  for (int i = 0; i <= 10; i++) {
-    
-    if (analogVal < MIN_VAL){
-      lightVal = i;
-      }
-    if (analogVal >= MIN_VAL &&  < ){
-      lightVal = i;
-      }
-  }
+ 
   //Serial.println("Scale: " + String(scale));
   int analogVal = analogRead(SENSOR_PIN); // scale of voltage reading is from MAX_VAL (extremely bright) to MIN_VAL (completely dark)
   
