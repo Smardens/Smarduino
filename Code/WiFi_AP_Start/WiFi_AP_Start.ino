@@ -1,3 +1,13 @@
+/*
+Proprietary Code of Smardens
+The Resilient Smart Garden Project
+
+Author:
+Brian Powell @BriianPowell
+v1.0
+*/
+
+//Libraries
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
@@ -29,6 +39,7 @@ void setup() {
   setupAP();
 }
 
+//Set up Soft Access Point off the ESP module to transmist data to
 void setupAP() {
   Serial.print("Setting soft-AP ... ");
 
@@ -38,7 +49,7 @@ void setupAP() {
   if (result == true)
   {
     Serial.println("Ready");
-  } 
+  }
   else
   {
     Serial.println("Failed!");
@@ -47,10 +58,11 @@ void setupAP() {
   IPAddress apIP = WiFi.softAPIP();
   Serial.print("\nAP IP address: ");
   Serial.print(apIP);
-  
+
   setupServer();
 }
 
+//Create HTTP endpoints for HTTP Post handling
 void setupServer() {
   Serial.println("\n[Server Setup]");
   Serial.println("[Starting server]");
@@ -63,12 +75,12 @@ void setupServer() {
   Serial.println("[Server Listening]");
 };
 
-// Handling the / root web page from my server
+//Handling the / root web page from my server
 void handle_index() {
   server.send(200, "text/plain", "ERROR! You don't have access to this server.");
 }
 
-// Handling the /uv page from my server
+//Handling the /uv page from my server
 void handle_uv() {
   String id = server.arg("id");
   String value = server.arg("value");
@@ -77,7 +89,7 @@ void handle_uv() {
   Serial.println("Sensor ID: " + String(id) + "   |   Sensor Value: " + String(value));
 }
 
-// Handling the /sm page from my server
+//Handling the /sm page from my server
 void handle_sm() {
   String id = server.arg("id");
   String value = server.arg("value");
@@ -86,7 +98,7 @@ void handle_sm() {
   Serial.println("Sensor ID: " + String(id) + "   |   Sensor Value: " + String(value));
 }
 
-// Handling the /dht page from my serverdht
+//Handling the /dht page from my serverdht
 void handle_dht() {
   String id = server.arg("id");
   String tVal = server.arg("temp");
@@ -96,10 +108,12 @@ void handle_dht() {
   Serial.println("Sensor ID: " + String(id) + "   |   Temperature Value: " + String(tVal) + " Humidity Value: " + String(hVal));
 }
 
+//Handle not found server page and redirect to 404
 void handleNotFound() {
   server.send(404, "text/plain", "404: Not Found");
 }
 
+//Constantly check for CRUD Http methods
 void loop() {
   server.handleClient();
 }

@@ -1,3 +1,13 @@
+/*
+Proprietary Code of Smardens
+The Resilient Smart Garden Project
+
+Author:
+Brian Powell @BriianPowell
+v1.0
+*/
+
+//Libraries
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
@@ -45,9 +55,11 @@ int counter = 0;
 String data;
 int lightVal;
 
+//Set up connection to access point and begin sensor read
 void setup()
 {
   ESP.eraseConfig();
+  WiFi.persistent(false);
     
   Serial.begin(115200);
   Serial.println();
@@ -56,6 +68,7 @@ void setup()
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(AP_SSID, AP_PASS);
 
+  //Wait for connect
   Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -68,7 +81,8 @@ void setup()
     counter++;
   }
   Serial.println();
-  
+
+  //Display localIP of module
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
 
@@ -84,6 +98,7 @@ void setup()
   hibernate(sleepInterval);
 }
 
+//Reads value from sensor then tries to figure out what UV Value it is
 void readUVSensor() {
   delay(1000);
   float scale = (MAX_VAL - MIN_VAL);
@@ -150,7 +165,8 @@ void readUVSensor() {
   Serial.println("Analog Value: " + String(analogVal));
   Serial.println("UV Level: "+ String(lightVal));
 }
-
+  
+//Build urlencoded data stream to be sent to ESP webserver
 void buildDataStream() {
   data = "id=";
   data += String(SENSORID);
@@ -159,6 +175,9 @@ void buildDataStream() {
   Serial.println("Data String: "+data);
 }
 
+//Utilizes HTTPClient Library to send an HTTP Post request to the webserver
+//Necessary to have gateway and subnet for this to work
+//Prints response code and response message
 void sendHttpRequest() {
   HTTPClient http;
   http.begin(serverHost);
@@ -170,6 +189,8 @@ void sendHttpRequest() {
   http.end();
 }
 
+//Function to hibernate the ESP module to conserve battery
+//Will wake up every pInterval minutes to run setup()
 void hibernate(int pInterval) {
   WiFi.disconnect();
   ESP.deepSleep(10 * 600000 * pInterval, WAKE_RFCAL);
