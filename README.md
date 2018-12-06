@@ -1,19 +1,19 @@
-# Smarduino
-Get it? Smardens and Arduino....Smarduino??
+# **Smarduino**
+*Get it? Smardens and Arduino....Smarduino??*
 
-## Developer Guidelines
-### Getting Started
+## **Developer Guidelines**
+### **Overview**
 To compile and test our Smart Garden solution you will need the software below. With the required software installed you will also need to following settings inside the Arduino IDE. Our solution is split into two parts. The first is the Arduino Due Main code which has several different functions: store all sensor data on an SD card from the ESP webserver connected to its serial port, deciding if it's time to water based on soil mositure levels, and powering all the devices connected to it(SD card, ESP webserver, water solenoid valve). The second are the AP_Start and AP_Connect sketches which handle sending and receiving the sensor data from the garden sensors at specific intervals. The AP_Connect is altered for each specific sensor in the garden. 
 
 There are wiring diagrams located in the Diagrams folder which detail the embedded system layout. 
 
-### Required Software
+### **Required Software**
 * [Arduino IDE](https://www.arduino.cc/en/Main/Software)
 * [Postman](https://www.getpostman.com/)
 
-### Arduino IDE Settings for Development
+### **Development Arduino IDE Settings**
 * Open the Arduino IDE and go to File -> Preferences
-* Make sure the "Sketchbook Location:" is pointed to where this repository is
+* **Make sure the "Sketchbook Location:" is pointed to where this repository is**
 * Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
 * In Tools -> Board select "Boards Managers..."
   * Find "ESP8266" and install
@@ -21,12 +21,17 @@ There are wiring diagrams located in the Diagrams folder which detail the embedd
 * After installation, your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
-### Arduino IDE Libraries
+### **Arduino IDE Libraries**
 * All required libraries are located in the "libraries" folder
   * If you receive "Missing Library" errors please submit issue tickets so we can resolve them
 
-#### ESP8266 Settings
+### **Board Settings**
+
+*Settings are located in the Tools dropdown*
+
+#### **ESP8266 Settings**
 *We are using the [Adafruit HUZZAH ESP8266](https://www.adafruit.com/product/2471)*
+
 ```
 Board: "Adafruit Feather HUZZAH ESP8266"
 Flash Size: "4M (1M SPIFFS)"
@@ -38,13 +43,17 @@ CPU Frequency: "160 MHz"
 Upload Speed: "115200"
 Erase Flash: "All Flash Contents"
 ```
-* [Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful when developing the client and server
+*Port will vary depending on which USB port the device is plugged into on your machine*
+
+*[Postman](https://www.getpostman.com/) was used to make HTTP POST requests, it may be useful when developing the client and server*
   
-#### Arduino Due Settings
+#### **Arduino Due Settings**
 *We are developing on the [Arduino Due](https://store.arduino.cc/usa/arduino-due)*
 ```
 Board: "Arduino Due (Programming Port)"
 ```
+*Port will vary depending on which USB port the device is plugged into on your machine*
+
 
 ## Mini-Cheatsheet for Git Instructions
 #### Helpful Definitions
