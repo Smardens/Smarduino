@@ -11,7 +11,8 @@ There are wiring diagrams located in the Diagrams folder which detail the embedd
 * [Arduino IDE](https://www.arduino.cc/en/Main/Software)
 * [Postman](https://www.getpostman.com/)
 
-### **Development Arduino IDE Settings**
+### **Development
+#### Arduino IDE Settings**
 * Open the Arduino IDE and go to File -> Preferences
 * **Make sure the "Sketchbook Location:" is pointed to where this repository is**
 * Enter [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json) into "Additional Boards Manager URLs:"
@@ -21,7 +22,7 @@ There are wiring diagrams located in the Diagrams folder which detail the embedd
 * After installation, your IDE is ready for development on the ESP and Arduino Due
 * Pick your desired development board in Tools -> Board
 
-### **Arduino IDE Libraries**
+#### **Arduino IDE Libraries**
 * All required libraries are located in the "libraries" folder
   * If you receive "Missing Library" errors please submit issue tickets so we can resolve them
 
